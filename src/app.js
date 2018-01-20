@@ -11,10 +11,11 @@ import { Provider } from 'react-redux';
 
 
 const store = configureStore();
+console.log('testing');
 
-store.dispatch(addExpense({ description: 'Gas bill', amount: 300 }));
+/* store.dispatch(addExpense({ description: 'Gas bill', amount: 300 }));
 store.dispatch(addExpense({ description: 'Water bill', amount: 1000 }));
-store.dispatch(addExpense({ description: 'Rent', amount: 10, createAt: 100 }));
+store.dispatch(addExpense({ description: 'Rent', amount: 10, createAt: 100 })); */
 
 //store.dispatch(setTextFilter('wat'));
 
