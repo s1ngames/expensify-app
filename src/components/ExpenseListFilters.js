@@ -2,12 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { setTextFilter, sortByAmount, sortByDate, setStartDate, setEndDate } from '../actions/filters';
 import { DateRangePicker } from 'react-dates';
+import selectExpenses from '../selectors/expenses';
 //improt connect to connect to the store
 //connect left sograim is what we want from the store
 
 class ExpenseListFilters extends React.Component {
     state = {
-        calendarFocused: null
+        calendarFocused: null,
+        expensesCount: undefined,
+        expensesSum: 0
     };
 
     onDatesChange = ({ startDate, endDate }) => {
@@ -21,6 +24,16 @@ class ExpenseListFilters extends React.Component {
                 calendarFocused: calendarFocused
             }
         });
+    };
+
+    getExpensesAmount = () => {
+        let sum = 0;
+        this.props.expenses.map((expense) => {
+            if (expense) {
+                sum += (expense.amount) / 100;
+            }
+        });
+        return sum;
     };
 
     render() {
@@ -53,6 +66,9 @@ class ExpenseListFilters extends React.Component {
                     startDateId={'start'}
                     endDateId={'end'}
                 />
+                <h4>{this.props.expenses ? `Found ${this.props.expenses.length} expesnses, with sum
+                of ${this.getExpensesAmount()}₪` :
+                    'No expenses found'}</h4>
             </div>
         )
     }
@@ -69,7 +85,8 @@ class ExpenseListFilters extends React.Component {
 //return what we want
 const mapStateToProps = (state) => {
     return {
-        filters: state.filters
+        filters: state.filters,
+        expenses: selectExpenses(state.expenses, state.filters)
     }
 
 };
