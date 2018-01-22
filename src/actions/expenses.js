@@ -27,10 +27,28 @@ export const startAddExpense = (expenseData = {}) => {
 
 
 //REMOVE_EXPENSE
-export const removeExpense = ({ id } = {}) => ({
+/* export const removeExpense = ({ id } = {}) => ({
+    type: 'REMOVE_EXPENSE',
+    id
+}); */
+
+export const removeExpense = (id) => ({
     type: 'REMOVE_EXPENSE',
     id
 });
+
+
+
+export const startRemoveExpense = ({ id } = {}) => {
+    return (dispatch) => {
+        database.ref(`expenses/${id}`).remove().then(() => {
+            dispatch(removeExpense(id));
+        });
+
+    }
+
+};
+
 
 //EDIT_EXPENSE
 export const editExpense = (id, updates) => ({
@@ -38,3 +56,57 @@ export const editExpense = (id, updates) => ({
     id,
     updates
 });
+
+export const startEditExpense = (id, updates) => {
+    return (dispatch) => {
+        database.ref(`expenses/${id}`).update({
+            ...updates
+        }).then(() => {
+            dispatch(editExpense(id, updates));
+        });
+
+    }
+
+};
+
+
+
+
+//fetch data from firebase _set expenses
+export const setExpenses = (expenses) => ({
+    type: 'SET_EXPENSES',
+    expenses: expenses
+});
+
+export const startSetExpenses = () => {
+
+    return (dispatch) => {//double return to make sure that the 'then' will get accsesd from app 
+
+        return database.ref('expenses').once('value').then((snapshot) => {
+            const expenses = [];
+            snapshot.forEach((childSnapshot) => {
+                expenses.push({
+                    id: childSnapshot.key,
+                    ...childSnapshot.val()
+                });
+            });
+
+            dispatch(setExpenses(expenses));
+
+        });
+    }
+
+};
+
+
+
+/* database.ref('expenses').once('value').then((snapshot) => {
+    const expenses = [];
+    snapshot.forEach((childSnapshot) => {
+        expenses.push({
+            id: childSnapshot.key,
+            ...childSnapshot.val()
+        });
+    });
+    console.log(expenses);
+}); */
